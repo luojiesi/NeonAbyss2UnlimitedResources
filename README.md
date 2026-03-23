@@ -35,6 +35,11 @@ A BepInEx plugin for Neon Abyss 2 that keeps your resources topped up during run
 
 ```bash
 cd UnlimitedResources
+dotnet build -p:GAME_DIR="<your Steam game directory>"
+```
+
+`GAME_DIR` should point to your Neon Abyss 2 Steam install directory, e.g.:
+```
 dotnet build -p:GAME_DIR="D:\Program Files (x86)\Steam\steamapps\common\Neon Abyss 2"
 ```
 
