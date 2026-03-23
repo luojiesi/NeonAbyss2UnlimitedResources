@@ -35,7 +35,7 @@ namespace UnlimitedResources
         private const int TARGET_FATE = 999;
         private const float REFILL_INTERVAL = 2f;
         private float _lastRefillTime;
-        private int _maxCrystalsSeen = 0;
+        private int _lastCrystalCount = -1;
 
         void Update()
         {
@@ -64,7 +64,7 @@ namespace UnlimitedResources
                     _lastScene = scene;
                     _playerState = null;
                     _gameState = null;
-                    _maxCrystalsSeen = 0;
+                    _lastCrystalCount = -1;
                 }
             }
             catch { }
@@ -103,18 +103,21 @@ namespace UnlimitedResources
             }
 
             // Crystals (via CostType resource system)
+            // Instead of tracking max ourselves (which misses mid-tick increases),
+            // just always add a large number and let the game cap at the real max.
             try
             {
                 int crystalCount = _playerState.GetAmount(CostType.Crystal, false);
+                if (_lastCrystalCount < 0)
+                    _lastCrystalCount = crystalCount;
 
-                if (crystalCount > _maxCrystalsSeen)
-                    _maxCrystalsSeen = crystalCount;
+                if (crystalCount < _lastCrystalCount)
+                    _playerState.AddResource(CostType.Crystal, _lastCrystalCount - crystalCount, true);
 
-                if (_maxCrystalsSeen > 0 && crystalCount < _maxCrystalsSeen)
-                {
-                    int deficit = _maxCrystalsSeen - crystalCount;
-                    _playerState.AddResource(CostType.Crystal, deficit, true);
-                }
+                // Always update to current (handles max increases from pickups)
+                int updated = _playerState.GetAmount(CostType.Crystal, false);
+                if (updated > _lastCrystalCount)
+                    _lastCrystalCount = updated;
             }
             catch { }
 
