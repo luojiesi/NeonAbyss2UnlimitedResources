@@ -1,0 +1,21 @@
+# Build artifacts
+bin/
+obj/
+
+# IDE
+.vs/
+*.user
+*.suo
+
+# Il2CppDumper output (too large)
+dump/
+
+# Il2CppInterop source repo (we only ship the patched DLL)
+Il2CppInterop/
+
+# Claude config
+.claude/
+
+# OS
+Thumbs.db
+.DS_Store
